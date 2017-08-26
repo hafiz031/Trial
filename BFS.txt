@@ -1,0 +1,184 @@
+#include<iostream>
+using namespace std;
+class Stack
+{
+    int m_info,s_size=0;
+    Stack *m_link,*m_top=NULL;
+public:
+    void Push(int data)
+    {
+        Stack *ptr;
+        ptr=new Stack();
+        ptr->m_info=data;
+        s_size++;
+        if(m_top==NULL)
+        {
+            ptr->m_link=NULL;
+            m_top=ptr;
+        }
+        else
+        {
+            ptr->m_link=m_top;
+            m_top=ptr;
+        }
+    }
+    void Pop()
+    {
+        s_size--;
+        if(m_top->m_link==NULL)return;
+        m_top=m_top->m_link;
+    }
+    int Top()
+    {
+        return m_top->m_info;
+    }
+    int Size()
+    {
+        return s_size;
+    }
+};
+
+class Vector
+{
+public:
+    int m_info,m_size=0;
+    Vector *m_link,*m_front=NULL,*m_back;
+    void Push_back(int data)
+    {
+        m_size++;
+        Vector *ptr=new Vector();
+        ptr->m_info=data;
+        ptr->m_link=NULL;
+        if(m_front==NULL)
+        {
+            m_front=ptr;
+            m_back=ptr;
+        }
+        else
+        {
+            m_back->m_link=ptr;
+            m_back=ptr;
+        }
+    }
+    void Traverse()
+    {
+        Vector *trav=m_front;
+        while(trav!=m_back)
+        {
+            cout<<trav->m_info<<" ";
+            trav=trav->m_link;
+        }
+        cout<<trav->m_info<<" ";
+    }
+    int Size()
+    {
+        return m_size;
+    }
+    int& operator[](int index)
+    {
+        Vector *m_trav=m_front;
+        while(index--)
+        {
+            m_trav=m_trav->m_link;
+        }
+        return m_trav->m_info;
+    }
+};
+
+class Queue
+{
+public:
+    int m_info,m_size=0;
+    Queue *m_link,*m_front=NULL,*m_temp;
+    void Push(int data)
+    {
+        Queue *ptr=new Queue();
+        ptr->m_info=data;
+        m_size++;
+        if(m_front==NULL)
+        {
+            m_front=ptr;
+            m_temp=ptr;
+        }
+        else
+        {
+            m_temp->m_link=ptr;
+            m_temp=ptr;
+        }
+    }
+    void Pop()
+    {
+        if(m_size>0)
+        {
+            m_front=m_front->m_link;
+            m_size--;
+        }
+        return;
+    }
+    int Front()
+    {
+        return m_front->m_info;
+    }
+    int Size()
+    {
+        return m_size;
+    }
+};
+
+Vector AdjList[101];
+int Parent[101];
+
+void BFS(int s,int d)
+{
+    int u,v;
+    Queue q;
+    q.Push(s);
+    Parent[s]=s;
+    cout<<"TRAVERSING: ";
+    while(q.Size())
+    {
+        u=q.Front();
+        cout<<u<<' ';
+        for(int i=0,z=AdjList[u].Size();i<z;i++)
+        {
+            v=AdjList[u][i];
+            if(!Parent[v])
+            {
+                Parent[v]=u;
+                q.Push(v);
+            }
+        }
+        q.Pop();
+    }
+    Stack S;
+    while(d!=s)
+    {
+        S.Push(d);
+        d=Parent[d];
+    }
+    S.Push(s);
+    cout<<endl<<"SHORTEST PATH FROM GIVEN SOURCE TO DESTINATION: ";
+    while(S.Size())
+    {
+        cout<<S.Top()<<' ';
+        S.Pop();
+    }
+}
+
+int main(void)
+{
+    int node,edge,node1,node2,s,d;
+    cout<<"ENTER NUMBER OF NODES AND EDGES: ";
+    cin>>node>>edge;
+    cout<<"ENTER ADJACENT NODES: "<<endl;
+    for(int i=0;i<edge;i++)
+    {
+        cin>>node1>>node2;
+        AdjList[node1].Push_back(node2);
+        AdjList[node2].Push_back(node1);
+    }
+    cout<<"ENTER SOURCE FOR TRAVERSING AND DESTINATION FOR GETTING THE SHORTEST PATH: ";
+    cin>>s>>d;
+    BFS(s,d);
+}
+//hafiz031
